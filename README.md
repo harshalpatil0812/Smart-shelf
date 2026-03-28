@@ -1,2 +1,2 @@
-prpoject is live link
+project is live link
 https://smart-shelf-1.onrender.com
