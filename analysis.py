@@ -5,17 +5,11 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, r2_score
 import pickle
 
-# ===============================
-# LOAD DATA
-# ===============================
 data = pd.read_csv(r"C:\Users\Dell\OneDrive\Desktop\Mohit\Code_2\data.csv")
 
 print("\nColumns in dataset:", data.columns)
 
-# ===============================
-# 🔥 AUTO FIX COLUMN NAMES
-# ===============================
-# Rename columns safely if needed
+
 
 if 'Date' not in data.columns:
     if 'date' in data.columns:
@@ -33,19 +27,15 @@ if 'Date' not in data.columns or 'Weekly_Sales' not in data.columns:
     print("Available columns:", data.columns)
     exit()
 
-print("✅ Columns fixed")
+print(" Columns fixed")
 
-# ===============================
-# CONVERT DATE
-# ===============================
+
 data["Date"] = pd.to_datetime(data["Date"])
 
-# Sort
+
 data = data.sort_values("Date")
 
-# ===============================
-# AGGREGATE (WEEKLY)
-# ===============================
+
 data["Week"] = data["Date"].dt.to_period("W").dt.start_time
 
 weekly = (
@@ -58,9 +48,7 @@ weekly = (
 print("\nAggregated weekly data:")
 print(weekly.head())
 
-# ===============================
-# VISUALIZATION
-# ===============================
+
 plt.figure(figsize=(8, 5))
 plt.plot(weekly["Date"], weekly["Weekly_Sales"], marker="o")
 plt.title("Sales Trend")
@@ -70,17 +58,13 @@ plt.grid()
 plt.savefig(r"C:\Users\Dell\OneDrive\Desktop\Mohit\Code_2\graph.jpeg")
 print("📊 Graph saved")
 
-# ===============================
-# BASIC ANALYSIS
-# ===============================
+
 print("\n--- Basic Analysis ---")
 print("Average Sales:", weekly["Weekly_Sales"].mean())
 print("Max Sales:", weekly["Weekly_Sales"].max())
 print("Min Sales:", weekly["Weekly_Sales"].min())
 
-# ===============================
-# FEATURE ENGINEERING
-# ===============================
+
 weekly["day"] = weekly["Date"].dt.day
 weekly["month"] = weekly["Date"].dt.month
 weekly["weekday"] = weekly["Date"].dt.weekday
@@ -95,9 +79,7 @@ weekly = weekly.dropna()
 print("\n--- Feature Data ---")
 print(weekly.head())
 
-# ===============================
-# MACHINE LEARNING
-# ===============================
+
 X = weekly[
     ["day", "month", "weekday", "is_weekend", "lag_1", "lag_2", "rolling_mean"]
 ]
@@ -118,24 +100,17 @@ model.fit(X_train, y_train)
 
 predictions = model.predict(X_test)
 
-# ===============================
-# RESULTS
-# ===============================
 print("\n--- Model Results ---")
 print("Predictions:", predictions)
 print("Actual:", y_test.values)
 print("MAE:", mean_absolute_error(y_test, predictions))
 print("R2 Score:", r2_score(y_test, predictions))
 
-# ===============================
-# SAVE MODEL
-# ===============================
+
 pickle.dump(model, open(r"C:\Users\Dell\OneDrive\Desktop\Mohit\Code_2\model.pkl", "wb"))
 print("💾 Model saved")
 
-# ===============================
-# PREDICTION GRAPH
-# ===============================
+
 plt.figure(figsize=(8, 5))
 plt.plot(y_test.index, y_test.values, label="Actual")
 plt.plot(y_test.index, predictions, label="Predicted")
